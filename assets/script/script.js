@@ -10,7 +10,16 @@ $(function () {
 
 	const HOUR_LABELS = ["12AM", "1AM", "2AM", "3AM", "4AM", "5AM", "6AM", "7AM", "8AM", "9AM", "10AM", "11AM", "12PM", "1PM", "2PM", "3PM", "4PM", "5PM", "6PM", "7PM", "8PM", "9PM", "10PM", "11PM"];
 
-	//const getTimeData = time
+	const getTimeData = time => {
+		const data = localStorage.getItem(HOUR_LABELS[time]);
+		return data == null ? {text: ""} : JSON.parse(data);
+	};
+
+	const setTimeData = (time, data) => {
+		localStorage.setItem(HOUR_LABELS[time], JSON.stringify({
+			text: data,
+		}));
+	};
 
 	const addTimeBlock = (time, cssClass) => {
 		const frag = TIME_BLOCK_TEMPLATE.content.cloneNode(true);
@@ -18,10 +27,12 @@ $(function () {
 		root.setAttribute ("id", `hour-${time}`);
 		root.querySelector("div").innerHTML = HOUR_LABELS[time];
 		const textArea = root.querySelector("textarea");
+		textArea.value = getTimeData(time).text;
 		root.classList.add(cssClass);
 		root.querySelector("button").addEventListener("click", function() {
 			// Save button pressed
-			console.log(textArea.value);
+			setTimeData(time, textArea.value);
+
 		});
 		TIME_BLOCK_CONTAINER.appendChild(frag);
 		BLOCKS.push(root);
